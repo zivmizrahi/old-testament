@@ -1,54 +1,58 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const BOOKS = [
-  { en: "Genesis", he: "בראשית" },
-  { en: "Exodus", he: "שמות" },
-  { en: "Leviticus", he: "ויקרא" },
-  { en: "Numbers", he: "במדבר" },
-  { en: "Deuteronomy", he: "דברים" },
-  { en: "Joshua", he: "יהושע" },
-  { en: "Judges", he: "שופטים" },
-  { en: "Ruth", he: "רות" },
-  { en: "1 Samuel", he: "שמואל א׳" },
-  { en: "2 Samuel", he: "שמואל ב׳" },
-  { en: "1 Kings", he: "מלכים א׳" },
-  { en: "2 Kings", he: "מלכים ב׳" },
-  { en: "1 Chronicles", he: "דברי הימים א׳" },
-  { en: "2 Chronicles", he: "דברי הימים ב׳" },
-  { en: "Ezra", he: "עזרא" },
-  { en: "Nehemiah", he: "נחמיה" },
-  { en: "Esther", he: "אסתר" },
-  { en: "Job", he: "איוב" },
-  { en: "Psalms", he: "תהילים" },
-  { en: "Proverbs", he: "משלי" },
-  { en: "Ecclesiastes", he: "קהלת" },
-  { en: "Song of Songs", he: "שיר השירים" },
-  { en: "Isaiah", he: "ישעיהו" },
-  { en: "Jeremiah", he: "ירמיהו" },
-  { en: "Lamentations", he: "איכה" },
-  { en: "Ezekiel", he: "יחזקאל" },
-  { en: "Daniel", he: "דניאל" },
-  { en: "Hosea", he: "הושע" },
-  { en: "Joel", he: "יואל" },
-  { en: "Amos", he: "עמוס" },
-  { en: "Obadiah", he: "עובדיה" },
-  { en: "Jonah", he: "יונה" },
-  { en: "Micah", he: "מיכה" },
-  { en: "Nahum", he: "נחום" },
-  { en: "Habakkuk", he: "חבקוק" },
-  { en: "Zephaniah", he: "צפניה" },
-  { en: "Haggai", he: "חגי" },
-  { en: "Zechariah", he: "זכריה" },
-  { en: "Malachi", he: "מלאכי" }
+  { en: "Genesis", he: "בראשית", chapters: 50 },
+  { en: "Exodus", he: "שמות", chapters: 40 },
+  { en: "Leviticus", he: "ויקרא", chapters: 27 },
+  { en: "Numbers", he: "במדבר", chapters: 36 },
+  { en: "Deuteronomy", he: "דברים", chapters: 34 },
+  { en: "Joshua", he: "יהושע", chapters: 24 },
+  { en: "Judges", he: "שופטים", chapters: 21 },
+  { en: "Ruth", he: "רות", chapters: 4 },
+  { en: "1 Samuel", he: "שמואל א׳", chapters: 31 },
+  { en: "2 Samuel", he: "שמואל ב׳", chapters: 24 },
+  { en: "1 Kings", he: "מלכים א׳", chapters: 22 },
+  { en: "2 Kings", he: "מלכים ב׳", chapters: 25 },
+  { en: "1 Chronicles", he: "דברי הימים א׳", chapters: 29 },
+  { en: "2 Chronicles", he: "דברי הימים ב׳", chapters: 36 },
+  { en: "Ezra", he: "עזרא", chapters: 10 },
+  { en: "Nehemiah", he: "נחמיה", chapters: 13 },
+  { en: "Esther", he: "אסתר", chapters: 10 },
+  { en: "Job", he: "איוב", chapters: 42 },
+  { en: "Psalms", he: "תהילים", chapters: 150 },
+  { en: "Proverbs", he: "משלי", chapters: 31 },
+  { en: "Ecclesiastes", he: "קהלת", chapters: 12 },
+  { en: "Song of Songs", he: "שיר השירים", chapters: 8 },
+  { en: "Isaiah", he: "ישעיהו", chapters: 66 },
+  { en: "Jeremiah", he: "ירמיהו", chapters: 52 },
+  { en: "Lamentations", he: "איכה", chapters: 5 },
+  { en: "Ezekiel", he: "יחזקאל", chapters: 48 },
+  { en: "Daniel", he: "דניאל", chapters: 12 },
+  { en: "Hosea", he: "הושע", chapters: 14 },
+  { en: "Joel", he: "יואל", chapters: 4 },
+  { en: "Amos", he: "עמוס", chapters: 9 },
+  { en: "Obadiah", he: "עובדיה", chapters: 1 },
+  { en: "Jonah", he: "יונה", chapters: 4 },
+  { en: "Micah", he: "מיכה", chapters: 7 },
+  { en: "Nahum", he: "נחום", chapters: 3 },
+  { en: "Habakkuk", he: "חבקוק", chapters: 3 },
+  { en: "Zephaniah", he: "צפניה", chapters: 3 },
+  { en: "Haggai", he: "חגי", chapters: 2 },
+  { en: "Zechariah", he: "זכריה", chapters: 14 },
+  { en: "Malachi", he: "מלאכי", chapters: 3 }
 ];
 
 export default function OldTestamentApp() {
   const [book, setBook] = useState("Genesis");
   const [chapter, setChapter] = useState(1);
   const [verses, setVerses] = useState([]);
-  const [language, setLanguage] = useState("he"); // 'he' or 'en'
+  const [language, setLanguage] = useState("he");
+
+  const currentBookData = BOOKS.find(b => b.en === book);
+  const maxChapter = currentBookData?.chapters || 1;
 
   useEffect(() => {
     const fetchSefariaText = async () => {
@@ -96,13 +100,15 @@ export default function OldTestamentApp() {
         <button
           className="px-3 py-1 bg-gray-300 rounded"
           onClick={() => setChapter((c) => Math.max(1, c - 1))}
+          disabled={chapter <= 1}
         >
           ←
         </button>
         <span className="self-center">Chapter {chapter}</span>
         <button
           className="px-3 py-1 bg-gray-300 rounded"
-          onClick={() => setChapter((c) => c + 1)}
+          onClick={() => setChapter((c) => Math.min(maxChapter, c + 1))}
+          disabled={chapter >= maxChapter}
         >
           →
         </button>
@@ -124,13 +130,22 @@ export default function OldTestamentApp() {
       </div>
 
       <div className="h-[60vh] overflow-y-auto pr-2">
-        <div className={`space-y-2 ${language === "he" ? "text-right" : "text-left"}`}>
-          {verses.map((v, i) => (
-            <p key={i} className="text-base">
-              <span className="font-bold">{i + 1}.</span> {v}
-            </p>
-          ))}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${book}-${chapter}-${language}`}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className={`space-y-2 ${language === "he" ? "text-right" : "text-left"}`}
+          >
+            {verses.map((v, i) => (
+              <p key={i} className="text-base">
+                <span className="font-bold">{i + 1}.</span> {v}
+              </p>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
