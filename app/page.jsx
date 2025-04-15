@@ -22,10 +22,12 @@ export default function OldTestamentApp() {
   useEffect(() => {
     const fetchSefariaText = async () => {
       const res = await fetch(
-        `https://www.sefaria.org/api/texts/${book}.${chapter}?lang=${language}`
+        `https://www.sefaria.org/api/texts/${book}.${chapter}?lang=${language}&context=0&commentary=0`
       );
       const data = await res.json();
-      setVerses(data.text || data.he || []);
+      const raw = (language === "he" ? data.he : data.text) || [];
+      const clean = raw.map((v) => v.replace(/<[^>]*>/g, ""));
+      setVerses(clean);
     };
 
     fetchSefariaText();
