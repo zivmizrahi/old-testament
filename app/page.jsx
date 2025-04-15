@@ -46,6 +46,7 @@ const BOOKS = [
 ];
 
 export default function OldTestamentApp() {
+  const [darkMode, setDarkMode] = useState(true);
   const [book, setBook] = useState("Genesis");
   const [chapter, setChapter] = useState(1);
   const [verses, setVerses] = useState([]);
@@ -78,7 +79,7 @@ export default function OldTestamentApp() {
   }, [book, chapter, language]);
 
   return (
-    <div className="min-h-screen p-4 bg-white text-black dark:bg-gray-900 dark:text-white">
+    <div className={`min-h-screen p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <h1 className="text-2xl font-bold mb-4">📖 {book} {chapter}</h1>
 
       <div className="mb-4">
@@ -94,6 +95,15 @@ export default function OldTestamentApp() {
             <option key={b.en} value={b.en}>{language === "he" ? b.he : b.en}</option>
           ))}
         </select>
+      </div>
+
+      <div className="flex gap-2 mb-4">
+        <button
+          className={`px-2 py-1 rounded border ${darkMode ? 'bg-white text-black' : 'bg-black text-white'}`}
+          onClick={() => setDarkMode(!darkMode)}
+        >
+          {darkMode ? '☀ Light' : '🌙 Dark'} Mode
+        </button>
       </div>
 
       <div className="flex gap-2 mb-4">
