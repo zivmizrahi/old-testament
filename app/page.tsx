@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const BOOKS = [
   "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
@@ -36,40 +34,60 @@ export default function OldTestamentApp() {
       <h1 className="text-2xl font-bold mb-4">📖 {book} {chapter}</h1>
 
       <div className="flex gap-2 flex-wrap mb-4">
-        {BOOKS.map(b => (
-          <Button
+        {BOOKS.map((b) => (
+          <button
             key={b}
-            variant={b === book ? "default" : "outline"}
+            className={`px-2 py-1 rounded border ${b === book ? "bg-black text-white" : "bg-white text-black"}`}
             onClick={() => {
               setBook(b);
               setChapter(1);
             }}
           >
             {b}
-          </Button>
+          </button>
         ))}
       </div>
 
       <div className="flex gap-2 mb-4">
-        <Button onClick={() => setChapter(c => Math.max(1, c - 1))}>←</Button>
+        <button
+          className="px-3 py-1 bg-gray-300 rounded"
+          onClick={() => setChapter((c) => Math.max(1, c - 1))}
+        >
+          ←
+        </button>
         <span className="self-center">Chapter {chapter}</span>
-        <Button onClick={() => setChapter(c => c + 1)}>→</Button>
+        <button
+          className="px-3 py-1 bg-gray-300 rounded"
+          onClick={() => setChapter((c) => c + 1)}
+        >
+          →
+        </button>
       </div>
 
       <div className="flex gap-2 mb-4">
-        <Button onClick={() => setLanguage("en")} variant={language === "en" ? "default" : "outline"}>English</Button>
-        <Button onClick={() => setLanguage("he")} variant={language === "he" ? "default" : "outline"}>עברית</Button>
+        <button
+          className={`px-2 py-1 rounded border ${language === "en" ? "bg-black text-white" : "bg-white text-black"}`}
+          onClick={() => setLanguage("en")}
+        >
+          English
+        </button>
+        <button
+          className={`px-2 py-1 rounded border ${language === "he" ? "bg-black text-white" : "bg-white text-black"}`}
+          onClick={() => setLanguage("he")}
+        >
+          עברית
+        </button>
       </div>
 
-      <ScrollArea className="h-[60vh] pr-2">
-        <div className={\`space-y-2 \${language === "he" ? "text-right" : "text-left"}\`}>
+      <div className="h-[60vh] overflow-y-auto pr-2">
+        <div className={`space-y-2 ${language === "he" ? "text-right" : "text-left"}`}>
           {verses.map((v, i) => (
             <p key={i} className="text-base">
               <span className="font-bold">{i + 1}.</span> {v}
             </p>
           ))}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 }
