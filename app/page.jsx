@@ -26,7 +26,16 @@ export default function OldTestamentApp() {
       );
       const data = await res.json();
       const raw = (language === "he" ? data.he : data.text) || [];
-      const clean = raw.map((v) => v.replace(/<[^>]*>/g, ""));
+      const clean = raw.map((v) =>
+        v
+          .replace(/<[^>]*>/g, "")
+          .replace(/&nbsp;/g, " ")
+          .replace(/&thinsp;/g, " ")
+          .replace(/&amp;/g, "&")
+          .replace(/&quot;/g, '"')
+          .replace(/&lt;/g, '<')
+          .replace(/&gt;/g, '>')
+      );
       setVerses(clean);
     };
 
