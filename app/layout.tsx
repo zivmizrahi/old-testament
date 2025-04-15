@@ -1,10 +1,17 @@
 // app/layout.tsx
+
+import "./globals.css";
+
 export const metadata = {
   title: "Old Testament App",
-  description: "Read the Old Testament in Hebrew and English",
+  description: "Read the Bible in Hebrew and English",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>{children}</body>
