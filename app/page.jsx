@@ -46,7 +46,7 @@ const BOOKS = [
 ];
 
 export default function OldTestamentApp() {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [book, setBook] = useState("Genesis");
   const [chapter, setChapter] = useState(1);
   const [verses, setVerses] = useState([]);
