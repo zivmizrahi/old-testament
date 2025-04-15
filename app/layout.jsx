@@ -1,5 +1,4 @@
-// app/layout.tsx
-
+// app/layout.jsx
 import "./globals.css";
 
 export const metadata = {
@@ -7,11 +6,7 @@ export const metadata = {
   description: "Read the Bible in Hebrew and English",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>{children}</body>
