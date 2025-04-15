@@ -3,14 +3,45 @@
 import { useEffect, useState } from "react";
 
 const BOOKS = [
-  "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
-  "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
-  "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
-  "Ezra", "Nehemiah", "Esther", "Job", "Psalms",
-  "Proverbs", "Ecclesiastes", "Song of Songs", "Isaiah", "Jeremiah",
-  "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel",
-  "Amos", "Obadiah", "Jonah", "Micah", "Nahum",
-  "Habakkuk", "Zephaniah", "Haggai", "Zechariah", "Malachi"
+  { en: "Genesis", he: "בראשית" },
+  { en: "Exodus", he: "שמות" },
+  { en: "Leviticus", he: "ויקרא" },
+  { en: "Numbers", he: "במדבר" },
+  { en: "Deuteronomy", he: "דברים" },
+  { en: "Joshua", he: "יהושע" },
+  { en: "Judges", he: "שופטים" },
+  { en: "Ruth", he: "רות" },
+  { en: "1 Samuel", he: "שמואל א׳" },
+  { en: "2 Samuel", he: "שמואל ב׳" },
+  { en: "1 Kings", he: "מלכים א׳" },
+  { en: "2 Kings", he: "מלכים ב׳" },
+  { en: "1 Chronicles", he: "דברי הימים א׳" },
+  { en: "2 Chronicles", he: "דברי הימים ב׳" },
+  { en: "Ezra", he: "עזרא" },
+  { en: "Nehemiah", he: "נחמיה" },
+  { en: "Esther", he: "אסתר" },
+  { en: "Job", he: "איוב" },
+  { en: "Psalms", he: "תהילים" },
+  { en: "Proverbs", he: "משלי" },
+  { en: "Ecclesiastes", he: "קהלת" },
+  { en: "Song of Songs", he: "שיר השירים" },
+  { en: "Isaiah", he: "ישעיהו" },
+  { en: "Jeremiah", he: "ירמיהו" },
+  { en: "Lamentations", he: "איכה" },
+  { en: "Ezekiel", he: "יחזקאל" },
+  { en: "Daniel", he: "דניאל" },
+  { en: "Hosea", he: "הושע" },
+  { en: "Joel", he: "יואל" },
+  { en: "Amos", he: "עמוס" },
+  { en: "Obadiah", he: "עובדיה" },
+  { en: "Jonah", he: "יונה" },
+  { en: "Micah", he: "מיכה" },
+  { en: "Nahum", he: "נחום" },
+  { en: "Habakkuk", he: "חבקוק" },
+  { en: "Zephaniah", he: "צפניה" },
+  { en: "Haggai", he: "חגי" },
+  { en: "Zechariah", he: "זכריה" },
+  { en: "Malachi", he: "מלאכי" }
 ];
 
 export default function OldTestamentApp() {
@@ -46,19 +77,19 @@ export default function OldTestamentApp() {
     <div className="min-h-screen p-4 bg-white text-black dark:bg-gray-900 dark:text-white">
       <h1 className="text-2xl font-bold mb-4">📖 {book} {chapter}</h1>
 
-      <div className="flex gap-2 flex-wrap mb-4">
-        {BOOKS.map((b) => (
-          <button
-            key={b}
-            className={`px-2 py-1 rounded border ${b === book ? "bg-black text-white" : "bg-white text-black"}`}
-            onClick={() => {
-              setBook(b);
-              setChapter(1);
-            }}
-          >
-            {b}
-          </button>
-        ))}
+      <div className="mb-4">
+        <select
+          className="w-full p-2 border rounded"
+          value={book}
+          onChange={(e) => {
+            setBook(e.target.value);
+            setChapter(1);
+          }}
+        >
+          {BOOKS.map((b) => (
+            <option key={b.en} value={b.en}>{language === "he" ? b.he : b.en}</option>
+          ))}
+        </select>
       </div>
 
       <div className="flex gap-2 mb-4">
