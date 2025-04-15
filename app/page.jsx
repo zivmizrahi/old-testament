@@ -51,6 +51,14 @@ export default function OldTestamentApp() {
   const [chapter, setChapter] = useState(1);
   const [verses, setVerses] = useState([]);
   const [language, setLanguage] = useState("he");
+  const [bookmarks, setBookmarks] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("bookmarks");
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
+  });
+  const [view, setView] = useState("bible");
 
   const currentBookData = BOOKS.find(b => b.en === book);
   const maxChapter = currentBookData?.chapters || 1;
@@ -75,29 +83,41 @@ export default function OldTestamentApp() {
       setVerses(clean);
     };
 
-    fetchSefariaText();
-  }, [book, chapter, language]);
+    if (view === "bible") fetchSefariaText();
+  }, [book, chapter, language, view]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+    }
+  }, [bookmarks]);
+
+  const toggleBookmark = (verseIndex) => {
+    const key = `${book}-${chapter}-${verseIndex}`;
+    setBookmarks((prev) =>
+      prev.some((v) => v.key === key)
+        ? prev.filter((v) => v.key !== key)
+        : [...prev, { key, book, chapter, verse: verseIndex, text: verses[verseIndex] }]
+    );
+  };
+
+  const isBookmarked = (verseIndex) => {
+    return bookmarks.some((v) => v.book === book && v.chapter === chapter && v.verse === verseIndex);
+  };
 
   return (
     <div className={`min-h-screen p-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <h1 className="text-2xl font-bold mb-4">📖 {book} {chapter}</h1>
 
-      <div className="mb-4">
-        <select
-          className="w-full p-2 border rounded"
-          value={book}
-          onChange={(e) => {
-            setBook(e.target.value);
-            setChapter(1);
-          }}
-        >
-          {BOOKS.map((b) => (
-            <option key={b.en} value={b.en}>{language === "he" ? b.he : b.en}</option>
-          ))}
-        </select>
-      </div>
-
       <div className="flex gap-2 mb-4">
+        <button
+          className={`px-2 py-1 rounded border ${view === "bible" ? "bg-black text-white" : "bg-white text-black"}`}
+          onClick={() => setView("bible")}
+        >Bible</button>
+        <button
+          className={`px-2 py-1 rounded border ${view === "bookmarks" ? "bg-black text-white" : "bg-white text-black"}`}
+          onClick={() => setView("bookmarks")}
+        >My Bookmarks</button>
         <button
           className={`px-2 py-1 rounded border ${darkMode ? 'bg-white text-black' : 'bg-black text-white'}`}
           onClick={() => setDarkMode(!darkMode)}
@@ -106,57 +126,95 @@ export default function OldTestamentApp() {
         </button>
       </div>
 
-      <div className="flex gap-2 mb-4">
-        <button
-          className="px-3 py-1 bg-gray-300 rounded"
-          onClick={() => setChapter((c) => Math.max(1, c - 1))}
-          disabled={chapter <= 1}
-        >
-          ←
-        </button>
-        <span className="self-center">Chapter {chapter}</span>
-        <button
-          className="px-3 py-1 bg-gray-300 rounded"
-          onClick={() => setChapter((c) => Math.min(maxChapter, c + 1))}
-          disabled={chapter >= maxChapter}
-        >
-          →
-        </button>
-      </div>
+      {view === "bible" && (
+        <>
+          <div className="mb-4">
+            <select
+              className="w-full p-2 border rounded"
+              value={book}
+              onChange={(e) => {
+                setBook(e.target.value);
+                setChapter(1);
+              }}
+            >
+              {BOOKS.map((b) => (
+                <option key={b.en} value={b.en}>{language === "he" ? b.he : b.en}</option>
+              ))}
+            </select>
+          </div>
 
-      <div className="flex gap-2 mb-4">
-        <button
-          className={`px-2 py-1 rounded border ${language === "en" ? "bg-black text-white" : "bg-white text-black"}`}
-          onClick={() => setLanguage("en")}
-        >
-          English
-        </button>
-        <button
-          className={`px-2 py-1 rounded border ${language === "he" ? "bg-black text-white" : "bg-white text-black"}`}
-          onClick={() => setLanguage("he")}
-        >
-          עברית
-        </button>
-      </div>
+          <div className="flex gap-2 mb-4">
+            <button
+              className="px-3 py-1 bg-gray-300 rounded"
+              onClick={() => setChapter((c) => Math.max(1, c - 1))}
+              disabled={chapter <= 1}
+            >←</button>
+            <span className="self-center">Chapter {chapter}</span>
+            <button
+              className="px-3 py-1 bg-gray-300 rounded"
+              onClick={() => setChapter((c) => Math.min(maxChapter, c + 1))}
+              disabled={chapter >= maxChapter}
+            >→</button>
+          </div>
 
-      <div className="h-[60vh] overflow-y-auto pr-2">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`${book}-${chapter}-${language}`}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className={`space-y-2 ${language === "he" ? "text-right" : "text-left"}`}
-          >
-            {verses.map((v, i) => (
-              <p key={i} className="text-base">
-                <span className="font-bold">{i + 1}.</span> {v}
-              </p>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+          <div className="flex gap-2 mb-4">
+            <button
+              className={`px-2 py-1 rounded border ${language === "en" ? "bg-black text-white" : "bg-white text-black"}`}
+              onClick={() => setLanguage("en")}
+            >English</button>
+            <button
+              className={`px-2 py-1 rounded border ${language === "he" ? "bg-black text-white" : "bg-white text-black"}`}
+              onClick={() => setLanguage("he")}
+            >עברית</button>
+          </div>
+
+          <div className="h-[60vh] overflow-y-auto pr-2">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${book}-${chapter}-${language}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className={`space-y-2 ${language === "he" ? "text-right" : "text-left"}`}
+              >
+                {verses.map((v, i) => (
+                  <p
+                    key={i}
+                    onClick={() => toggleBookmark(i)}
+                    className={`text-base cursor-pointer transition rounded px-1 ${isBookmarked(i) ? "bg-yellow-200 dark:bg-yellow-600" : ""}`}
+                  >
+                    <span className="font-bold">{i + 1}.</span> {v}
+                  </p>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </>
+      )}
+
+      {view === "bookmarks" && (
+        <div className="space-y-3">
+          {bookmarks.length === 0 ? (
+            <p className="text-gray-500">No bookmarks yet.</p>
+          ) : (
+            bookmarks.map((bm, idx) => (
+              <div
+                key={bm.key || idx}
+                className="border p-2 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                onClick={() => {
+                  setBook(bm.book);
+                  setChapter(bm.chapter);
+                  setView("bible");
+                }}
+              >
+                <p className="text-sm">📌 {bm.book} {bm.chapter}:{bm.verse + 1}</p>
+                <p className="text-base">{bm.text}</p>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
