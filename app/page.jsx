@@ -46,6 +46,8 @@ const BOOKS = [
 ];
 
 export default function OldTestamentApp() {
+  let touchStartX = 0;
+  let touchEndX = 0;
   const [darkMode, setDarkMode] = useState(false);
   const [book, setBook] = useState("Genesis");
   const [chapter, setChapter] = useState(1);
@@ -168,7 +170,16 @@ export default function OldTestamentApp() {
             >עברית</button>
           </div>
 
-          <div className="h-[60vh] overflow-y-auto pr-2">
+          <div
+            className="h-[60vh] overflow-y-auto pr-2"
+            onTouchStart={(e) => touchStartX = e.changedTouches[0].screenX}
+            onTouchEnd={(e) => {
+              touchEndX = e.changedTouches[0].screenX;
+              const swipeDistance = touchEndX - touchStartX;
+              if (swipeDistance > 50 && chapter > 1) setChapter((c) => c - 1);
+              if (swipeDistance < -50 && chapter < maxChapter) setChapter((c) => c + 1);
+            }}
+          >
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${book}-${chapter}-${language}`}
